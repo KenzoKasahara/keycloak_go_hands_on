@@ -1,0 +1,4 @@
+# 秘密情報と生成物をGitに含めない。
+.env
+generated/
+*.token

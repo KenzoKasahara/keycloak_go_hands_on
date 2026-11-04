@@ -1,0 +1,95 @@
+name: keycloak-go-sso-lab
+
+# Goサービス共通の設定。
+# ISSUERはブラウザと同じURLに固定し、コンテナ内の接続先はKEYCLOAK_INTERNALで指定する。
+x-go: &go
+  build: .
+  environment: &common
+    ISSUER: http://127.0.0.1:9080/realms/sso-lab
+    KEYCLOAK_INTERNAL: keycloak:8080
+  restart: "no"
+
+services:
+  # keycloak/appの2つのDBを持つ。ホストへはポートを公開しない。
+  postgres:
+    image: postgres:17.5
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?run setup}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:?run setup}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?run setup}
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./db/init.sh:/docker-entrypoint-initdb.d/01-init.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -h 127.0.0.1 -U postgres -d postgres]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+
+  # 共通IdP。--import-realmで初回だけRealmを取り込む。公開URLはKC_HOSTNAMEで固定する。
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.0
+    command: [start-dev, --import-realm]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: bootstrap-admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:?run setup}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:?run setup}
+      KC_HOSTNAME: http://127.0.0.1:9080
+      ALICE_PASSWORD: ${ALICE_PASSWORD:?run setup}
+      BOB_PASSWORD: ${BOB_PASSWORD:?run setup}
+    ports: ["127.0.0.1:9080:8080"]
+    volumes: ["./generated/sso-lab-realm.json:/opt/keycloak/data/import/sso-lab-realm.json:ro"]
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  # DBを持たないAPI。audience=api-a のトークンだけを受け入れる。
+  api-a:
+    <<: *go
+    command: [api]
+    environment:
+      <<: *common
+      API_AUDIENCE: api-a
+    ports: ["127.0.0.1:9001:8080"]
+
+  # 文書DBを持つAPI。audience=api-b のトークンだけを受け入れる。
+  api-b:
+    <<: *go
+    command: [api]
+    environment:
+      <<: *common
+      API_AUDIENCE: api-b
+      DATABASE_URL: postgres://app:${APP_DB_PASSWORD:?run setup}@postgres:5432/app?sslmode=disable
+    ports: ["127.0.0.1:9002:8080"]
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  # App A。API_URLが通常の呼び出し先、OTHER_API_URLはaudience拒否の確認用。
+  web-a:
+    <<: *go
+    command: [web]
+    environment:
+      <<: *common
+      CLIENT_ID: web-a
+      PUBLIC_BASE: http://127.0.0.1:9081
+      API_URL: http://api-a:8080
+      OTHER_API_URL: http://api-b:8080
+    ports: ["127.0.0.1:9081:8080"]
+
+  # App B。API_URLが通常の呼び出し先、OTHER_API_URLはaudience拒否の確認用。
+  web-b:
+    <<: *go
+    command: [web]
+    environment:
+      <<: *common
+      CLIENT_ID: web-b
+      PUBLIC_BASE: http://127.0.0.1:9082
+      API_URL: http://api-b:8080
+      OTHER_API_URL: http://api-a:8080
+    ports: ["127.0.0.1:9082:8080"]
+
+volumes:
+  pg-data:

@@ -1,0 +1,5 @@
+# 秘密情報と生成物をDockerのビルドコンテキストに含めない。
+.env
+generated
+*.token
+.git
