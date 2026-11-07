@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" font-family="'Noto Sans JP','Hiragino Sans','Yu Gothic UI','Meiryo',sans-serif">
+  <title>Keycloakは秘密鍵（印鑑）でJWTに署名し、ヘッダーにkid（印鑑の番号）を入れる。APIはJWKSで受け取った公開鍵（印影の見本）をkidで選び、署名を照合する</title>
+  <defs>
+    <marker id="gray" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+    <marker id="teal" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0d9488"/></marker>
+    <symbol id="shield" viewBox="0 0 40 48">
+      <path d="M20,2 L38,9 V24 Q38,40 20,46 Q2,40 2,24 V9 Z" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="20" cy="20" r="5" fill="#ffffff" stroke="none"/>
+      <path d="M17,23 H23 L22,33 H18 Z" fill="#ffffff" stroke="none"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 40 56">
+      <rect x="0" y="0" width="40" height="16" rx="3"/>
+      <rect x="0" y="20" width="40" height="16" rx="3"/>
+      <rect x="0" y="40" width="40" height="16" rx="3"/>
+      <circle cx="32" cy="8" r="2.5" fill="#ffffff" opacity="0.7"/><circle cx="32" cy="28" r="2.5" fill="#ffffff" opacity="0.7"/><circle cx="32" cy="48" r="2.5" fill="#ffffff" opacity="0.7"/>
+    </symbol>
+  </defs>
+  <rect x="0.5" y="0.5" width="959" height="419" rx="16" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="32" y="44" font-size="20" font-weight="700" fill="#0f172a">秘密鍵で署名し、公開鍵で照合する（ハンコにたとえると）</text>
+
+  <!-- JWKS distribution arc -->
+  <path d="M152,116 C152,62 810,62 810,114" stroke="#0d9488" stroke-width="2.5" stroke-dasharray="8 6" fill="none" marker-end="url(#teal)"/>
+  <rect x="330" y="62" width="300" height="28" rx="14" fill="#f0fdfa" stroke="#99f6e4"/>
+  <text x="480" y="81" font-size="14" font-weight="700" fill="#0f766e" text-anchor="middle">JWKS で公開鍵だけを配布（kid 付き）</text>
+
+  <!-- Keycloak -->
+  <rect x="32" y="120" width="240" height="220" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2.5"/>
+  <use href="#shield" x="50" y="134" width="36" height="44" fill="#7c3aed" stroke="#5b21b6"/>
+  <text x="98" y="164" font-size="18" font-weight="700" fill="#4c1d95">Keycloak</text>
+  <rect x="48" y="196" width="208" height="128" rx="10" fill="#ffffff" stroke="#f59e0b" stroke-width="2"/>
+  <!-- hanko (seal) -->
+  <rect x="70" y="214" width="22" height="40" rx="5" fill="#fcd34d" stroke="#b45309" stroke-width="2"/>
+  <rect x="65" y="252" width="32" height="10" rx="2" fill="#dc2626" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="110" y="234" font-size="16" font-weight="700" fill="#0f172a">秘密鍵</text>
+  <text x="110" y="256" font-size="14" font-weight="700" fill="#b45309">＝ 印鑑</text>
+  <text x="62" y="292" font-size="13" fill="#64748b">Keycloak の外に</text>
+  <text x="62" y="311" font-size="13" fill="#64748b">出さない</text>
+
+  <!-- arrow 1 -->
+  <path d="M276,230 L362,230" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+  <text x="318" y="218" font-size="13" font-weight="700" fill="#334155" text-anchor="middle">① 署名</text>
+
+  <!-- JWT -->
+  <rect x="368" y="110" width="224" height="240" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="480" y="104" font-size="13" font-weight="700" fill="#334155" text-anchor="middle">JWT（token）</text>
+  <rect x="380" y="122" width="200" height="50" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+  <text x="392" y="141" font-size="12" fill="#1e3a8a">ヘッダー</text>
+  <text x="392" y="162" font-size="14" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#1d4ed8">kid = kid1</text>
+  <text x="572" y="162" font-size="12" font-weight="700" fill="#1e3a8a" text-anchor="end">＝ 印鑑の番号</text>
+  <rect x="380" y="180" width="200" height="82" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="392" y="199" font-size="12" fill="#475569">ペイロード（中身）</text>
+  <text x="392" y="222" font-size="13" font-family="Consolas,'Courier New',monospace" fill="#334155">sub / aud / exp</text>
+  <path d="M392,238 H560 M392,250 H520" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>
+  <rect x="380" y="270" width="200" height="68" rx="6" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="392" y="290" font-size="12" fill="#991b1b">署名</text>
+  <text x="392" y="316" font-size="13" fill="#0f172a">秘密鍵で押した印</text>
+  <g transform="translate(546,304)">
+    <circle r="22" fill="none" stroke="#dc2626" stroke-width="3"/>
+    <text y="7" font-size="19" font-weight="700" fill="#dc2626" text-anchor="middle">印</text>
+  </g>
+
+  <!-- arrow 2 -->
+  <path d="M596,230 L682,230" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+  <text x="639" y="218" font-size="13" font-weight="700" fill="#334155" text-anchor="middle">② 送る</text>
+
+  <!-- API -->
+  <rect x="688" y="120" width="240" height="220" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+  <use href="#server" x="706" y="134" width="32" height="45" fill="#2563eb"/>
+  <text x="752" y="164" font-size="18" font-weight="700" fill="#1e3a8a">API</text>
+  <rect x="704" y="196" width="208" height="128" rx="10" fill="#ffffff" stroke="#0d9488" stroke-width="2"/>
+  <!-- seal impression sample -->
+  <rect x="720" y="212" width="36" height="46" rx="3" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <circle cx="738" cy="235" r="11" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+  <text x="738" y="240" font-size="12" font-weight="700" fill="#dc2626" text-anchor="middle">印</text>
+  <text x="768" y="234" font-size="16" font-weight="700" fill="#0f172a">公開鍵</text>
+  <text x="768" y="256" font-size="14" font-weight="700" fill="#0f766e">＝ 印影の見本</text>
+  <text x="718" y="292" font-size="13" fill="#64748b">kid で見本を選び、</text>
+  <text x="718" y="311" font-size="13" fill="#64748b">署名を照合する</text>
+
+  <!-- footer -->
+  <rect x="32" y="364" width="896" height="38" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="52" y="389" font-size="14" fill="#0f172a">③ 印影が見本と一致すれば「Keycloak が発行し、改ざんされていない」と判断できる</text>
+</svg>

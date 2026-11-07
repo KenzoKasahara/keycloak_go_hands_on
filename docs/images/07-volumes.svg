@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" width="960" height="330" font-family="'Noto Sans JP','Hiragino Sans','Yu Gothic UI','Meiryo',sans-serif">
+  <title>docker compose downではVolumeが残り、次回の起動でimportと初期化をスキップするので前回のRealmとDBのまま。docker compose down --volumesではVolumeも削除され、次回の起動でimportと初期化を実行し、新しい.envの値で作り直される</title>
+  <defs>
+    <marker id="gray" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+    <symbol id="db" viewBox="0 0 40 48">
+      <path d="M2,8 V40 A18,6 0 0 0 38,40 V8" stroke-width="2"/>
+      <ellipse cx="20" cy="8" rx="18" ry="6" stroke-width="2"/>
+      <path d="M2,20 A18,6 0 0 0 38,20 M2,30 A18,6 0 0 0 38,30" fill="none" stroke-width="1.5"/>
+    </symbol>
+  </defs>
+  <rect x="0.5" y="0.5" width="959" height="329" rx="16" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="32" y="44" font-size="20" font-weight="700" fill="#0f172a">Volume を消すかどうかで、次回の起動結果が変わる</text>
+
+  <!-- row 1: down -->
+  <g transform="translate(0,72)">
+    <rect x="32" y="0" width="200" height="100" rx="12" fill="#1e293b"/>
+    <text x="48" y="30" font-size="12" fill="#94a3b8">コマンド</text>
+    <text x="48" y="62" font-size="14" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#ffffff">docker compose</text>
+    <text x="48" y="82" font-size="14" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#ffffff">down</text>
+
+    <path d="M236,50 L268,50" stroke="#94a3b8" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+    <rect x="272" y="0" width="200" height="100" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+    <use href="#db" x="290" y="26" width="40" height="48" fill="#e2e8f0" stroke="#475569"/>
+    <text x="344" y="46" font-size="15" font-weight="700" fill="#0f172a">Volume</text>
+    <text x="344" y="68" font-size="14" fill="#475569">残る</text>
+
+    <path d="M476,50 L508,50" stroke="#94a3b8" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+    <rect x="512" y="0" width="200" height="100" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+    <text x="528" y="30" font-size="12" fill="#64748b">次回の起動</text>
+    <text x="528" y="58" font-size="14" font-weight="700" fill="#0f172a">import と初期化を</text>
+    <text x="528" y="80" font-size="14" font-weight="700" fill="#0f172a">スキップ</text>
+
+    <path d="M716,50 L748,50" stroke="#94a3b8" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+    <rect x="752" y="0" width="176" height="100" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+    <g transform="translate(780,36)">
+      <path d="M0,-14 L15,12 H-15 Z" fill="#f59e0b" stroke="#b45309" stroke-width="2" stroke-linejoin="round"/>
+      <text y="9" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">!</text>
+    </g>
+    <text x="804" y="42" font-size="14" font-weight="700" fill="#92400e">前回の Realm と</text>
+    <text x="804" y="64" font-size="14" font-weight="700" fill="#92400e">DB のまま</text>
+  </g>
+
+  <!-- row 2: down with volumes -->
+  <g transform="translate(0,204)">
+    <rect x="32" y="0" width="200" height="100" rx="12" fill="#1e293b"/>
+    <text x="48" y="30" font-size="12" fill="#94a3b8">コマンド</text>
+    <text x="48" y="62" font-size="14" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#ffffff">docker compose</text>
+    <text x="48" y="82" font-size="14" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#86efac">down --volumes</text>
+
+    <path d="M236,50 L268,50" stroke="#94a3b8" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+    <rect x="272" y="0" width="200" height="100" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+    <use href="#db" x="290" y="26" width="40" height="48" fill="#ffffff" stroke="#94a3b8" stroke-dasharray="4 3"/>
+    <g transform="translate(326,70)">
+      <circle r="10" fill="#dc2626"/>
+      <path d="M-4,-4 L4,4 M4,-4 L-4,4" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+    <text x="344" y="46" font-size="15" font-weight="700" fill="#0f172a">Volume</text>
+    <text x="344" y="68" font-size="14" fill="#b91c1c">も削除</text>
+
+    <path d="M476,50 L508,50" stroke="#94a3b8" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+    <rect x="512" y="0" width="200" height="100" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+    <text x="528" y="30" font-size="12" fill="#64748b">次回の起動</text>
+    <text x="528" y="58" font-size="14" font-weight="700" fill="#0f172a">import と初期化を</text>
+    <text x="528" y="80" font-size="14" font-weight="700" fill="#0f172a">実行</text>
+
+    <path d="M716,50 L748,50" stroke="#94a3b8" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+    <rect x="752" y="0" width="176" height="100" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+    <g transform="translate(780,36)">
+      <circle r="14" fill="#16a34a"/>
+      <path d="M-6,0 L-2,5 L7,-5" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="804" y="42" font-size="14" font-weight="700" fill="#166534">新しい .env の</text>
+    <text x="804" y="64" font-size="14" font-weight="700" fill="#166534">値で作り直す</text>
+  </g>
+</svg>

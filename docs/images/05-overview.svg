@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" width="960" height="470" font-family="'Noto Sans JP','Hiragino Sans','Yu Gothic UI','Meiryo',sans-serif">
+  <title>Keycloak停止で止まるもの（新規ログイン、トークン更新、cold cacheのAPI）と動き続けるもの（warm cacheのAPI）</title>
+  <defs>
+    <marker id="ng" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+    <symbol id="shield" viewBox="0 0 40 48">
+      <path d="M20,2 L38,9 V24 Q38,40 20,46 Q2,40 2,24 V9 Z" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="20" cy="20" r="5" fill="#ffffff" stroke="none"/>
+      <path d="M17,23 H23 L22,33 H18 Z" fill="#ffffff" stroke="none"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 40 56">
+      <rect x="0" y="0" width="40" height="16" rx="3"/>
+      <rect x="0" y="20" width="40" height="16" rx="3"/>
+      <rect x="0" y="40" width="40" height="16" rx="3"/>
+      <circle cx="32" cy="8" r="2.5" fill="#ffffff" opacity="0.7"/><circle cx="32" cy="28" r="2.5" fill="#ffffff" opacity="0.7"/><circle cx="32" cy="48" r="2.5" fill="#ffffff" opacity="0.7"/>
+    </symbol>
+    <symbol id="key" viewBox="0 0 40 20">
+      <circle cx="9" cy="10" r="6.5" fill="none" stroke-width="3"/>
+      <path d="M15.5,10 H38 M30,10 V17 M36,10 V16" fill="none" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+  <rect x="0.5" y="0.5" width="959" height="469" rx="16" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="32" y="44" font-size="20" font-weight="700" fill="#0f172a">Keycloak が止まると、止まる処理と動き続ける処理に分かれる</text>
+
+  <!-- Keycloak (stopped) -->
+  <rect x="380" y="66" width="200" height="76" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <use href="#shield" x="398" y="80" width="40" height="48" fill="#cbd5e1" stroke="#64748b"/>
+  <text x="452" y="100" font-size="18" font-weight="700" fill="#475569">Keycloak</text>
+  <text x="452" y="124" font-size="14" font-weight="700" fill="#b91c1c">停止中</text>
+  <g transform="translate(578,68)">
+    <circle r="15" fill="#dc2626"/>
+    <path d="M-6,-6 L6,6 M6,-6 L-6,6" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <path d="M420,146 L300,180" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#ng)"/>
+
+  <!-- Left panel: stops -->
+  <rect x="32" y="182" width="444" height="266" rx="14" fill="#fef2f2" stroke="#fecaca" stroke-width="2"/>
+  <text x="54" y="212" font-size="16" font-weight="700" fill="#991b1b">止まる：Keycloak が必要な処理</text>
+
+  <!-- row 1: login -->
+  <g transform="translate(0,226)">
+    <rect x="48" y="0" width="412" height="62" rx="10" fill="#ffffff" stroke="#fecaca"/>
+    <g transform="translate(82,31)" stroke="#b91c1c" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="-2" y="-15" width="16" height="30" rx="2"/>
+      <path d="M-18,0 H6 M0,-6 L6,0 L0,6"/>
+    </g>
+    <text x="116" y="27" font-size="15" font-weight="700" fill="#0f172a">新規ログイン</text>
+    <text x="116" y="48" font-size="13" fill="#64748b">ログイン画面へ到達できない</text>
+    <g transform="translate(404,31)">
+      <rect x="-42" y="-16" width="84" height="32" rx="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+      <path d="M-30,-7 l12,12 M-18,-7 l-12,12" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round"/>
+      <text x="12" y="6" font-size="15" font-weight="700" fill="#b91c1c" text-anchor="middle">失敗</text>
+    </g>
+  </g>
+
+  <!-- row 2: refresh -->
+  <g transform="translate(0,298)">
+    <rect x="48" y="0" width="412" height="62" rx="10" fill="#ffffff" stroke="#fecaca"/>
+    <g transform="translate(82,31)" stroke="#b91c1c" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12,-5 A13,13 0 1 0 12,6"/>
+      <path d="M12,-14 V-4 H2"/>
+    </g>
+    <text x="116" y="27" font-size="15" font-weight="700" fill="#0f172a">トークン更新</text>
+    <text x="116" y="48" font-size="13" fill="#64748b">Refresh unavailable と表示</text>
+    <g transform="translate(404,31)">
+      <rect x="-42" y="-16" width="84" height="32" rx="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+      <path d="M-30,-7 l12,12 M-18,-7 l-12,12" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round"/>
+      <text x="12" y="6" font-size="15" font-weight="700" fill="#b91c1c" text-anchor="middle">失敗</text>
+    </g>
+  </g>
+
+  <!-- row 3: cold cache -->
+  <g transform="translate(0,370)">
+    <rect x="48" y="0" width="412" height="62" rx="10" fill="#ffffff" stroke="#fecaca"/>
+    <use href="#server" x="66" y="12" width="28" height="39" fill="#94a3b8"/>
+    <g transform="translate(92,44)">
+      <circle r="9" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+      <path d="M-4,-4 L4,4 M4,-4 L-4,4" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+    <text x="116" y="27" font-size="15" font-weight="700" fill="#0f172a">API（cold cache）</text>
+    <text x="116" y="48" font-size="13" fill="#64748b">公開鍵を取得できず検証できない</text>
+    <g transform="translate(404,31)">
+      <rect x="-42" y="-16" width="84" height="32" rx="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+      <path d="M-30,-7 l12,12 M-18,-7 l-12,12" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round"/>
+      <text x="12" y="6" font-size="16" font-weight="700" fill="#b91c1c" text-anchor="middle">401</text>
+    </g>
+  </g>
+
+  <!-- Right panel: keeps working -->
+  <rect x="484" y="182" width="444" height="266" rx="14" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="2"/>
+  <text x="506" y="212" font-size="16" font-weight="700" fill="#166534">動き続ける：Keycloak に問い合わせない処理</text>
+
+  <!-- row 1: warm + valid -->
+  <g transform="translate(452,226)">
+    <rect x="48" y="0" width="412" height="62" rx="10" fill="#ffffff" stroke="#bbf7d0"/>
+    <use href="#server" x="66" y="12" width="28" height="39" fill="#16a34a"/>
+    <g transform="translate(92,44)">
+      <circle r="10" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+      <use href="#key" x="-8" y="-4" width="16" height="8" stroke="#16a34a"/>
+    </g>
+    <text x="116" y="27" font-size="15" font-weight="700" fill="#0f172a">API（warm cache）</text>
+    <text x="116" y="48" font-size="13" fill="#64748b">期限内の JWT を手元の公開鍵で検証</text>
+    <g transform="translate(404,31)">
+      <rect x="-42" y="-16" width="84" height="32" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <path d="M-28,0 l6,6 l11,-12" stroke="#16a34a" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="12" y="6" font-size="16" font-weight="700" fill="#15803d" text-anchor="middle">200</text>
+    </g>
+  </g>
+
+  <!-- row 2: warm + expired -->
+  <g transform="translate(452,298)">
+    <rect x="48" y="0" width="412" height="62" rx="10" fill="#ffffff" stroke="#bbf7d0"/>
+    <use href="#server" x="66" y="12" width="28" height="39" fill="#16a34a"/>
+    <g transform="translate(92,44)" stroke="#b45309" stroke-width="2" fill="#ffffff" stroke-linecap="round">
+      <circle r="10"/>
+      <path d="M0,-6 V0 L4,3" fill="none"/>
+    </g>
+    <text x="116" y="27" font-size="15" font-weight="700" fill="#0f172a">API（warm cache）</text>
+    <text x="116" y="48" font-size="13" fill="#64748b">exp を過ぎた JWT は拒否</text>
+    <g transform="translate(404,31)">
+      <rect x="-42" y="-16" width="84" height="32" rx="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+      <path d="M-30,-7 l12,12 M-18,-7 l-12,12" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round"/>
+      <text x="12" y="6" font-size="16" font-weight="700" fill="#b91c1c" text-anchor="middle">401</text>
+    </g>
+  </g>
+
+  <!-- row 3: note -->
+  <g transform="translate(452,370)">
+    <rect x="48" y="0" width="412" height="62" rx="10" fill="#fffbeb" stroke="#fcd34d"/>
+    <g transform="translate(82,31)">
+      <circle r="13" fill="#f59e0b"/>
+      <text y="6" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">!</text>
+    </g>
+    <text x="116" y="27" font-size="14" font-weight="700" fill="#92400e">200 は Keycloak が動いている証拠ではない</text>
+    <text x="116" y="48" font-size="13" fill="#64748b">手元の鍵で検証できたというだけ</text>
+  </g>
+</svg>

@@ -132,9 +132,29 @@ cd keycloak_go_hands_on/keycloak-go-sso
 
 SSOとtoken共有、ユーザー権限とレコード権限を別の仮説として言語化できる。この段階ではまだサービスを作らない。
 
+観察表の7行は、次の3つの観点に分かれる。似ている2つを混同しないことが、この段階のゴールである。
+
+![観察表の7行は3つの観点に分かれる。認証：SSO（A→Bでパスワード省略）とtoken共有（A token→B APIは401）は別物。認可：ユーザー権限（bob→管理APIは403）とレコード権限（bob→alice文書は404）は別物。可用性：warm cacheは期限内200、cold cacheは401、トークン更新は失敗](images/01-viewpoints.svg)
+
 ### なぜ行うのか
 
 HTTP 200/401だけでなく、どの処理がどこで行われたかまで確認するため。
+
+同じ「拒否」でも、判定している場所が違う。観察表の「説明」欄には、どこで拒否されたかを書く。
+
+```mermaid
+flowchart LR
+  REQ["APIリクエスト<br/>Bearer token"] --> V{"JWT検証（Middleware）<br/>署名・issuer・audience・exp"}
+  V -->|NG| E401["401"]
+  V -->|"OK：/api/admin"| R{"ロール確認（RBAC）<br/>adminロールがあるか"}
+  R -->|ない| E403["403"]
+  R -->|ある| OK1["200"]
+  V -->|"OK：/api/documents/{id}"| D{"SQLの所有者条件<br/>本人の文書か、adminか"}
+  D -->|該当行なし| E404["404"]
+  D -->|該当行あり| OK2["200"]
+```
+
+401はKeycloakではなくAPIのMiddlewareが、404はKeycloakではなくDBの検索結果が決める。実装は [api.go](../keycloak-go-sso/internal/lab/api.go)。
 
 ---
 

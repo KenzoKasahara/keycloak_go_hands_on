@@ -2,3 +2,5 @@
 .env
 generated/
 *.token
+
+**/__pycache__/

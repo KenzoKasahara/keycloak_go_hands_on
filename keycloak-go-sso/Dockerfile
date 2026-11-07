@@ -1,5 +1,5 @@
 # ビルド用ステージ。依存の取得を先に行い、キャッシュを効かせる。
-FROM golang:1.24.4-bookworm AS build
+FROM golang:1.27.3-bookworm AS build
 WORKDIR /src
 
 COPY go.mod go.sum ./

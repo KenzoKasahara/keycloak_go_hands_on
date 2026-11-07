@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="960" height="480" font-family="'Noto Sans JP','Hiragino Sans','Yu Gothic UI','Meiryo',sans-serif">
+  <title>Realm sso-labには共通ユーザーalice（admin, user）とbob（user）、Web clientのweb-aとweb-b（Public、PKCE S256）、API clientのapi-aとapi-bがある。audience mapperでweb-aはapi-a、web-bはapi-bを宛先にする。.envの実パスワードは${ALICE_PASSWORD}などとして展開される</title>
+  <defs>
+    <marker id="gray" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+    <marker id="blue" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="green" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#059669"/></marker>
+    <symbol id="page" viewBox="0 0 30 38">
+      <path d="M2,2 H20 L28,10 V36 H2 Z" fill="#ffffff" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M20,2 V10 H28" fill="none" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="key" viewBox="0 0 40 20">
+      <circle cx="9" cy="10" r="6.5" fill="none" stroke-width="3"/>
+      <path d="M15.5,10 H38 M30,10 V17 M36,10 V16" fill="none" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="person" viewBox="0 0 40 40">
+      <circle cx="20" cy="12" r="8" stroke-width="2"/>
+      <path d="M6,38 Q6,22 20,22 Q34,22 34,38 Z" stroke-width="2"/>
+    </symbol>
+    <symbol id="window" viewBox="0 0 48 40">
+      <rect x="1.5" y="1.5" width="45" height="37" rx="4" fill="#ffffff" stroke-width="2.5"/>
+      <path d="M1.5,12 H46.5" stroke-width="2.5" fill="none"/>
+      <circle cx="8" cy="7" r="1.8" stroke="none"/><circle cx="14" cy="7" r="1.8" stroke="none"/><circle cx="20" cy="7" r="1.8" stroke="none"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 40 56">
+      <rect x="0" y="0" width="40" height="16" rx="3"/>
+      <rect x="0" y="20" width="40" height="16" rx="3"/>
+      <rect x="0" y="40" width="40" height="16" rx="3"/>
+      <circle cx="32" cy="8" r="2.5" fill="#ffffff" opacity="0.7"/><circle cx="32" cy="28" r="2.5" fill="#ffffff" opacity="0.7"/><circle cx="32" cy="48" r="2.5" fill="#ffffff" opacity="0.7"/>
+    </symbol>
+  </defs>
+  <rect x="0.5" y="0.5" width="959" height="479" rx="16" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="32" y="44" font-size="20" font-weight="700" fill="#0f172a">生成される Realm の中身：client ごとに audience が1つに決まる</text>
+
+  <!-- .env -->
+  <rect x="200" y="62" width="190" height="62" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+  <use href="#page" x="214" y="74" width="30" height="38" stroke="#b45309"/>
+  <use href="#key" x="224" y="96" width="20" height="10" stroke="#d97706"/>
+  <text x="256" y="90" font-size="15" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#0f172a">.env</text>
+  <text x="256" y="110" font-size="12" fill="#92400e">実パスワード</text>
+
+  <!-- Realm -->
+  <rect x="32" y="146" width="896" height="312" rx="16" fill="#faf5ff" stroke="#7c3aed" stroke-width="2.5"/>
+  <text x="52" y="176" font-size="16" font-weight="700" fill="#4c1d95">Realm sso-lab</text>
+
+  <!-- Users -->
+  <rect x="52" y="194" width="270" height="246" rx="12" fill="#ffffff" stroke="#e9d5ff" stroke-width="2"/>
+  <text x="68" y="218" font-size="14" font-weight="700" fill="#334155">共通ユーザー</text>
+  <rect x="66" y="230" width="242" height="88" rx="10" fill="#fffbeb" stroke="#fcd34d"/>
+  <use href="#person" x="80" y="250" width="44" height="44" fill="#fbbf24" stroke="#b45309"/>
+  <path d="M93,252 L93,242 L98,247 L102,238 L106,247 L111,242 L111,252 Z" fill="#f59e0b" stroke="#b45309" stroke-width="1.5" stroke-linejoin="round"/>
+  <text x="138" y="264" font-size="16" font-weight="700" fill="#0f172a">alice</text>
+  <rect x="138" y="278" width="62" height="24" rx="12" fill="#d97706"/>
+  <text x="169" y="295" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">admin</text>
+  <rect x="206" y="278" width="54" height="24" rx="12" fill="#e2e8f0"/>
+  <text x="233" y="295" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">user</text>
+
+  <rect x="66" y="332" width="242" height="88" rx="10" fill="#f8fafc" stroke="#cbd5e1"/>
+  <use href="#person" x="80" y="352" width="44" height="44" fill="#93c5fd" stroke="#1d4ed8"/>
+  <text x="138" y="366" font-size="16" font-weight="700" fill="#0f172a">bob</text>
+  <rect x="138" y="380" width="54" height="24" rx="12" fill="#e2e8f0"/>
+  <text x="165" y="397" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">user</text>
+
+  <!-- Web clients -->
+  <rect x="352" y="194" width="270" height="246" rx="12" fill="#ffffff" stroke="#e9d5ff" stroke-width="2"/>
+  <text x="368" y="218" font-size="14" font-weight="700" fill="#334155">Web client</text>
+  <text x="458" y="218" font-size="12" fill="#64748b">Public・PKCE S256</text>
+  <rect x="366" y="236" width="230" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <use href="#window" x="380" y="252" width="44" height="37" fill="#2563eb" stroke="#2563eb"/>
+  <text x="438" y="278" font-size="16" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#1e3a8a">web-a</text>
+  <rect x="366" y="350" width="230" height="70" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <use href="#window" x="380" y="366" width="44" height="37" fill="#059669" stroke="#059669"/>
+  <text x="438" y="392" font-size="16" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#064e3b">web-b</text>
+
+  <!-- API clients -->
+  <rect x="652" y="194" width="256" height="246" rx="12" fill="#ffffff" stroke="#e9d5ff" stroke-width="2"/>
+  <text x="668" y="218" font-size="14" font-weight="700" fill="#334155">API client</text>
+  <text x="752" y="218" font-size="12" fill="#64748b">audience の宛先</text>
+  <rect x="668" y="236" width="224" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <use href="#server" x="684" y="248" width="33" height="46" fill="#2563eb"/>
+  <text x="734" y="278" font-size="16" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#1e3a8a">api-a</text>
+  <rect x="668" y="350" width="224" height="70" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <use href="#server" x="684" y="362" width="33" height="46" fill="#059669"/>
+  <text x="734" y="392" font-size="16" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#064e3b">api-b</text>
+
+  <!-- audience mapper -->
+  <path d="M600,271 L662,271" stroke="#2563eb" stroke-width="3" fill="none" marker-end="url(#blue)"/>
+  <path d="M600,385 L662,385" stroke="#059669" stroke-width="3" fill="none" marker-end="url(#green)"/>
+  <text x="637" y="322" font-size="11" font-weight="700" fill="#5b21b6" text-anchor="middle">audience</text>
+  <text x="637" y="337" font-size="11" font-weight="700" fill="#5b21b6" text-anchor="middle">mapper</text>
+  <path d="M290,128 L290,226" stroke="#d97706" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#gray)"/>
+  <text x="304" y="168" font-size="12" font-family="Consolas,'Courier New',monospace" fill="#92400e">${ALICE_PASSWORD} などを</text>
+  <text x="304" y="184" font-size="12" fill="#92400e">Keycloak が自身の環境変数から展開</text>
+</svg>

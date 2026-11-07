@@ -81,6 +81,8 @@ grep -E '^(ALICE|BOB)_PASSWORD=' .env
 - 両アプリのsubは同じ
 - 「別APIへ同じトークン」は両アプリでHTTP 401
 
+![aliceのtokenはアプリごとに別。App AのtokenはAPI Aで200、API Bで401。App BのtokenはAPI Bで200、API Aで401](images/03-step4-expected.svg)
+
 ※ 未検証（Networkタブの目視確認）。Aの要求に上記のパラメータが含まれることは、プログラムからの通信で確認した。
 
 ### なぜ行うのか
@@ -88,6 +90,12 @@ grep -E '^(ALICE|BOB)_PASSWORD=' .env
 同じユーザーでも、tokenはアプリごとに別物であることを確かめるため。ロールは共通だが、Access Tokenのaudienceが異なるので、もう一方のAPIは401で拒否する。
 
 SSOで省略されるのはKeycloakでのパスワード入力だけで、Bの認可フローは省略されない。Bも固有の認可コードとPKCE verifierでtokenを取得している。比較のため、毎回の再認証を求める `prompt=login` や `max_age=0` は付けていない。
+
+共有されるものと、アプリごとに分かれるものを並べると次のようになる。
+
+![AとBで共有するのはSSO Cookie、sub、Realm roles。client_id、state・nonce・PKCE、認可コード、Access Tokenのaud、WebセッションCookieはアプリごとに別](images/03-step4-why.svg)
+
+SSOは「ログイン状態の共有」であり、「tokenの共有」ではない。
 
 ## Step 5. API呼び出しと文書データを用意する
 
@@ -97,8 +105,10 @@ SSOで省略されるのはKeycloakでのパスワード入力だけで、Bの�
 
 まず、ログインとAPI呼び出しを済ませる。
 
-1. aliceのまま、A/Bで「API /me」「API /admin」を押す。すべてHTTP 200になる
+1. aliceのまま、A/Bそれぞれで「トークン更新」を押してから「API /me」「API /admin」を押す。すべてHTTP 200になる
 2. 別のブラウザプロファイルを開き、bobでA、Bの順にログインする
+
+Access Tokenの寿命は180秒で、Webアプリは自動で更新しない。Step 4から3分以上たつと期限切れになり、APIは401を返す。APIのログには `token is expired` と出る。画面の `Access Token expires:` で期限を確認できる。
 
 次にtokenを保存する。寿命が180秒なので、ここから下はseedまで続けて行う。各画面で「トークン更新」を押してから「学習用Access Tokenダウンロード」を押す。ブラウザの保存名は別のユーザーでも同じなので、1つ保存するたびに名前を変える。
 
@@ -144,11 +154,17 @@ seedの最後に `Seeded document 1=Alice, document 2=Bob; previous documents re
 
 adminでも一覧は本人の文書に限られ、他者の文書を取得できるのは個別取得だけである。bobには、文書の存在を伝えないよう404を返す。
 
+![aliceはid=1を一覧・個別で取得でき、id=2はadminの例外として個別取得だけできる。bobはid=2を一覧・個別で取得でき、id=1の個別取得は404](images/03-step5-expected.svg)
+
 ※ 未検証（この手順を手で行った場合に180秒以内に収まるか）。
 
 ### なぜ行うのか
 
 ユーザー名は変更できるので、文書の所有者にはRealm内で変わらないsubを使う。
+
+seedは、APIが検証したsubだけを所有者として書き込む。
+
+![seed.pyがAPI Bの/api/meへtokenを送り、検証済みのsubを受け取る。2つのsubが異なることを確認し、既存文書をTRUNCATEして、id=1をaliceのsub、id=2をbobのsubで登録する](images/03-step5-why.svg)
 
 <details>
 <summary>補足：seed.pyが行う処理</summary>

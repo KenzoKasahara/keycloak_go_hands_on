@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="960" height="400" font-family="'Noto Sans JP','Hiragino Sans','Yu Gothic UI','Meiryo',sans-serif">
+  <title>setup.pyが.envとgenerated/sso-lab-realm.jsonを生成する。keycloakは.envと、初回のみRealm JSONを読み込む。postgresはkeycloakとapi-bが使う。keycloakのDiscoveryが200になってからweb-a、web-b、api-a、api-bを起動する</title>
+  <defs>
+    <marker id="gray" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+    <marker id="purple" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+    <symbol id="page" viewBox="0 0 30 38">
+      <path d="M2,2 H20 L28,10 V36 H2 Z" fill="#ffffff" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M20,2 V10 H28" fill="none" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M7,17 H23 M7,23 H23 M7,29 H17" fill="none" stroke-width="2" opacity="0.5"/>
+    </symbol>
+    <symbol id="shield" viewBox="0 0 40 48">
+      <path d="M20,2 L38,9 V24 Q38,40 20,46 Q2,40 2,24 V9 Z" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="20" cy="20" r="5" fill="#ffffff" stroke="none"/>
+      <path d="M17,23 H23 L22,33 H18 Z" fill="#ffffff" stroke="none"/>
+    </symbol>
+    <symbol id="db" viewBox="0 0 40 48">
+      <path d="M2,8 V40 A18,6 0 0 0 38,40 V8" stroke-width="2"/>
+      <ellipse cx="20" cy="8" rx="18" ry="6" stroke-width="2"/>
+      <path d="M2,20 A18,6 0 0 0 38,20 M2,30 A18,6 0 0 0 38,30" fill="none" stroke-width="1.5"/>
+    </symbol>
+    <symbol id="key" viewBox="0 0 40 20">
+      <circle cx="9" cy="10" r="6.5" fill="none" stroke-width="3"/>
+      <path d="M15.5,10 H38 M30,10 V17 M36,10 V16" fill="none" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+  <rect x="0.5" y="0.5" width="959" height="399" rx="16" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="32" y="44" font-size="20" font-weight="700" fill="#0f172a">この章で作るもの：生成ファイルとサービスの起動順</text>
+
+  <!-- step labels -->
+  <g font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">
+    <circle cx="44" cy="82" r="12" fill="#0f172a"/><text x="44" y="87">1</text>
+    <circle cx="510" cy="82" r="12" fill="#0f172a"/><text x="510" y="87">2</text>
+    <circle cx="748" cy="82" r="12" fill="#0f172a"/><text x="748" y="87">3</text>
+  </g>
+  <text x="62" y="87" font-size="14" font-weight="700" fill="#334155">setup で生成</text>
+  <text x="528" y="87" font-size="14" font-weight="700" fill="#334155">DB と Keycloak</text>
+  <text x="766" y="87" font-size="14" font-weight="700" fill="#334155">Web / API</text>
+
+  <!-- setup.py -->
+  <rect x="32" y="176" width="150" height="80" rx="12" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <g transform="translate(48,196)">
+    <rect width="38" height="38" rx="8" fill="#1e293b"/>
+    <path d="M10,13 L17,19 L10,25 M20,27 H29" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="96" y="212" font-size="15" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#0f172a">setup.py</text>
+  <text x="96" y="234" font-size="12" fill="#64748b">1回だけ実行</text>
+
+  <!-- files -->
+  <rect x="232" y="106" width="210" height="80" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="2"/>
+  <use href="#page" x="246" y="126" width="30" height="38" stroke="#b45309"/>
+  <use href="#key" x="256" y="150" width="20" height="10" stroke="#d97706"/>
+  <text x="288" y="142" font-size="16" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#0f172a">.env</text>
+  <text x="288" y="164" font-size="12" fill="#92400e">実パスワード（Git管理外）</text>
+
+  <rect x="232" y="246" width="210" height="80" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <use href="#page" x="246" y="266" width="30" height="38" stroke="#7c3aed"/>
+  <text x="288" y="280" font-size="12" font-family="Consolas,'Courier New',monospace" fill="#64748b">generated/</text>
+  <text x="288" y="300" font-size="13" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#0f172a">sso-lab-realm.json</text>
+  <text x="288" y="318" font-size="12" fill="#5b21b6">値はプレースホルダー</text>
+
+  <path d="M186,206 L226,156" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+  <path d="M186,226 L226,276" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+
+  <!-- keycloak -->
+  <rect x="500" y="116" width="200" height="90" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2.5"/>
+  <use href="#shield" x="516" y="136" width="36" height="44" fill="#7c3aed" stroke="#5b21b6"/>
+  <text x="564" y="156" font-size="16" font-weight="700" fill="#4c1d95">keycloak</text>
+  <text x="564" y="178" font-size="12" fill="#475569">Realm sso-lab</text>
+
+  <!-- postgres -->
+  <rect x="500" y="276" width="200" height="90" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2.5"/>
+  <use href="#db" x="518" y="294" width="34" height="42" fill="#e2e8f0" stroke="#475569"/>
+  <text x="564" y="316" font-size="16" font-weight="700" fill="#334155">postgres</text>
+  <text x="564" y="338" font-size="12" fill="#475569">keycloak 用と app 用</text>
+
+  <path d="M446,146 L494,154" stroke="#d97706" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+  <path d="M446,280 L494,190" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#purple)"/>
+  <rect x="404" y="214" width="96" height="22" rx="11" fill="#ffffff" stroke="#c4b5fd"/>
+  <text x="452" y="230" font-size="12" font-weight="700" fill="#5b21b6" text-anchor="middle">初回のみ import</text>
+  <path d="M600,272 L600,212" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+
+  <!-- apps group -->
+  <rect x="760" y="106" width="172" height="270" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <g font-size="14" font-weight="700" font-family="Consolas,'Courier New',monospace" text-anchor="middle">
+    <rect x="778" y="124" width="136" height="42" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="846" y="150" fill="#1e3a8a">web-a</text>
+    <rect x="778" y="178" width="136" height="42" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text x="846" y="204" fill="#064e3b">web-b</text>
+    <rect x="778" y="250" width="136" height="42" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="846" y="276" fill="#1e3a8a">api-a</text>
+    <rect x="778" y="304" width="136" height="42" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text x="846" y="330" fill="#064e3b">api-b</text>
+  </g>
+
+  <path d="M704,161 L754,190" stroke="#7c3aed" stroke-width="3" fill="none" marker-end="url(#purple)"/>
+  <text x="730" y="234" font-size="12" font-weight="700" fill="#5b21b6" text-anchor="middle">Discovery</text>
+  <text x="730" y="250" font-size="12" font-weight="700" fill="#5b21b6" text-anchor="middle">200 後に起動</text>
+  <path d="M704,330 L772,326" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+</svg>

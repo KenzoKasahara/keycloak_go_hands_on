@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="960" height="480" font-family="'Noto Sans JP','Hiragino Sans','Yu Gothic UI','Meiryo',sans-serif">
+  <title>新鍵kid2を追加して署名に使い、旧鍵kid1は旧tokenの期限まで公開を続ける。APIは再起動なしでkid2のtokenもkid1のtokenも200で受け付ける</title>
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+    <marker id="gray" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+    <symbol id="ticket" viewBox="0 0 220 80">
+      <path d="M10,0 H210 A10,10 0 0 1 220,10 V30 A10,10 0 0 0 220,50 V70 A10,10 0 0 1 210,80 H10 A10,10 0 0 1 0,70 V50 A10,10 0 0 0 0,30 V10 A10,10 0 0 1 10,0 Z"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 40 56">
+      <rect x="0" y="0" width="40" height="16" rx="3"/>
+      <rect x="0" y="20" width="40" height="16" rx="3"/>
+      <rect x="0" y="40" width="40" height="16" rx="3"/>
+      <circle cx="32" cy="8" r="2.5" fill="#ffffff" opacity="0.7"/><circle cx="32" cy="28" r="2.5" fill="#ffffff" opacity="0.7"/><circle cx="32" cy="48" r="2.5" fill="#ffffff" opacity="0.7"/>
+    </symbol>
+    <symbol id="key" viewBox="0 0 40 20">
+      <circle cx="9" cy="10" r="6.5" fill="none" stroke-width="3"/>
+      <path d="M15.5,10 H38 M30,10 V17 M36,10 V16" fill="none" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+  <rect x="0.5" y="0.5" width="959" height="479" rx="16" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="32" y="44" font-size="20" font-weight="700" fill="#0f172a">鍵を追加しても、API は再起動なしで新旧どちらの token も受け付ける</text>
+
+  <!-- before -->
+  <rect x="24" y="90" width="170" height="150" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="40" y="116" font-size="15" font-weight="700" fill="#334155">追加前</text>
+  <rect x="38" y="130" width="142" height="94" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+  <use href="#key" x="50" y="146" width="40" height="20" stroke="#64748b"/>
+  <text x="100" y="162" font-size="15" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#334155">kid1</text>
+  <text x="50" y="200" font-size="13" fill="#475569">署名に使用</text>
+
+  <!-- add arrow -->
+  <path d="M198,165 L270,165" stroke="#94a3b8" stroke-width="2.5" fill="none" marker-end="url(#gray)"/>
+  <text x="234" y="190" font-size="12" fill="#475569" text-anchor="middle">鍵を追加</text>
+  <text x="234" y="206" font-size="12" fill="#475569" text-anchor="middle">Priority 高</text>
+
+  <!-- after -->
+  <rect x="276" y="90" width="230" height="300" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="292" y="116" font-size="15" font-weight="700" fill="#334155">追加後（JWKS）</text>
+
+  <rect x="290" y="130" width="202" height="110" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+  <use href="#key" x="304" y="146" width="40" height="20" stroke="#2563eb"/>
+  <text x="354" y="162" font-size="15" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#1d4ed8">kid2</text>
+  <rect x="412" y="145" width="52" height="22" rx="11" fill="#2563eb"/>
+  <text x="438" y="161" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">新鍵</text>
+  <text x="304" y="196" font-size="13" fill="#334155">Priority 高</text>
+  <text x="304" y="218" font-size="13" fill="#334155">新しい token の署名に使用</text>
+
+  <rect x="290" y="256" width="202" height="120" rx="8" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+  <use href="#key" x="304" y="272" width="40" height="20" stroke="#64748b"/>
+  <text x="354" y="288" font-size="15" font-weight="700" font-family="Consolas,'Courier New',monospace" fill="#334155">kid1</text>
+  <rect x="412" y="271" width="52" height="22" rx="11" fill="#94a3b8"/>
+  <text x="438" y="287" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">旧鍵</text>
+  <text x="304" y="322" font-size="13" fill="#334155">署名には使わない</text>
+  <text x="304" y="344" font-size="13" fill="#334155">旧 token の期限まで</text>
+  <text x="304" y="364" font-size="13" fill="#334155">公開を続ける</text>
+
+  <!-- key -> token -->
+  <path d="M496,180 L542,178" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#gray)"/>
+  <path d="M496,316 L542,316" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#gray)"/>
+
+  <!-- tokens -->
+  <use href="#ticket" x="548" y="140" width="170" height="74" fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="576" y1="146" x2="576" y2="208" stroke="#2563eb" stroke-dasharray="4 4"/>
+  <text x="586" y="170" font-size="14" font-weight="700" fill="#1e3a8a">新しい token</text>
+  <text x="586" y="196" font-size="13" font-family="Consolas,'Courier New',monospace" fill="#1d4ed8">kid = kid2</text>
+
+  <use href="#ticket" x="548" y="280" width="170" height="74" fill="#f1f5f9" stroke="#64748b" stroke-width="2.5"/>
+  <line x1="576" y1="286" x2="576" y2="348" stroke="#64748b" stroke-dasharray="4 4"/>
+  <text x="586" y="310" font-size="14" font-weight="700" fill="#334155">更新前の token</text>
+  <text x="586" y="336" font-size="13" font-family="Consolas,'Courier New',monospace" fill="#475569">kid = kid1</text>
+
+  <!-- API -->
+  <rect x="846" y="160" width="96" height="200" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+  <use href="#server" x="874" y="182" width="40" height="56" fill="#2563eb"/>
+  <text x="894" y="270" font-size="18" font-weight="700" fill="#1e3a8a" text-anchor="middle">API</text>
+  <text x="894" y="294" font-size="13" font-weight="700" fill="#b91c1c" text-anchor="middle">再起動なし</text>
+  <text x="894" y="314" font-size="12" fill="#475569" text-anchor="middle">（A / B）</text>
+
+  <!-- token -> API -->
+  <path d="M722,177 L840,230" stroke="#16a34a" stroke-width="3" fill="none" marker-end="url(#ok)"/>
+  <path d="M722,317 L840,292" stroke="#16a34a" stroke-width="3" fill="none" marker-end="url(#ok)"/>
+  <text x="781" y="176" font-size="12" font-weight="700" fill="#166534" text-anchor="middle">JWKS 再取得</text>
+  <g transform="translate(781,204)">
+    <rect x="-42" y="-16" width="84" height="32" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <path d="M-28,0 l6,6 l11,-12" stroke="#16a34a" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="12" y="6" font-size="16" font-weight="700" fill="#15803d" text-anchor="middle">200</text>
+  </g>
+  <g transform="translate(781,305)">
+    <rect x="-42" y="-16" width="84" height="32" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <path d="M-28,0 l6,6 l11,-12" stroke="#16a34a" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="12" y="6" font-size="16" font-weight="700" fill="#15803d" text-anchor="middle">200</text>
+  </g>
+  <text x="781" y="342" font-size="12" font-weight="700" fill="#166534" text-anchor="middle">期限内</text>
+
+  <!-- footer -->
+  <rect x="24" y="408" width="918" height="54" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="44" y="430" font-size="14" fill="#0f172a">API は知らない kid を受け取ったときだけ JWKS を取り直す。再起動や定期取得は不要</text>
+  <text x="44" y="451" font-size="13" fill="#64748b">旧鍵を無効化するのは、旧鍵で署名した token がすべて期限切れになってから</text>
+</svg>

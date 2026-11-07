@@ -17,13 +17,7 @@
 
 ## テストの範囲
 
-```mermaid
-flowchart LR
-  G[Go test / httptest] -->|偽JWKS、テスト用RSA鍵、Repository fake| U[claims、JWKS、認可、PKCE、CSRF]
-  P[verify.py] -->|実サービス| I[audience、RBAC、実DB所有者]
-  J[browser_test.py] -->|Cookie jar| F[SSO、更新、ログアウトのプロトコル]
-  B[実ブラウザ] -->|Chapter 03の手順| H[Origin、SameSite、CSP、画面]
-```
+![Go test/httptestは偽JWKS、テスト用RSA鍵、Repository fakeでclaims、JWKS、認可、PKCE、CSRFを確認する。verify.pyは実サービスでaudience、RBAC、実DB所有者を確認する。browser_test.pyはCookie jarでSSO、更新、ログアウトのプロトコルを確認する。実ブラウザはChapter 03の手順でOrigin、SameSite、CSP、画面を確認する](images/04-test-scope.svg)
 
 本番コードの変更はない。テストごとに確認できる範囲が違うので、1つで他を代替しない。
 
@@ -38,9 +32,17 @@ Goテストの後に、実サービスへの結合試験を行う。
 Goテストと静的検査：
 
 ```bash
-docker run --rm -v "$PWD:/src" -w /src golang:1.24.4-bookworm \
+docker run --rm -v "$PWD:/src" -w /src golang:1.27.3-bookworm \
   sh -c 'go test -race ./... && go vet ./...'
 ```
+
+> [!NOTE]
+> Windows の Git Bash では `/src` がWindowsパスに書き換えられ、`the working directory '...' is invalid` で失敗する。次のようにパス変換を止めて実行する。
+>
+> ```bash
+> MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd -W):/src" -w /src golang:1.27.3-bookworm \
+>   sh -c 'go test -race ./... && go vet ./...'
+> ```
 
 結合試験は、Chapter 03で保存したtokenが180秒以内のものである必要がある。Goテストの間に期限が切れるので、**直前に3つのtokenを保存し直して**から実行する。
 
@@ -62,9 +64,21 @@ python3 scripts/verify.py generated/alice-a.token generated/alice-b.token genera
 - Pythonは各期待HTTPコードをPASSで表示する
 - 401が出たら、まずtokenを再取得して正常系を成立させる
 
+```mermaid
+flowchart LR
+  G["Goテスト・vet"] -->|終了コード0| T{"tokenは<br/>180秒以内か"}
+  T -->|いいえ| RE["3つのtokenを保存し直す<br/>または browser_test.py"]
+  RE --> V
+  T -->|はい| V["verify.py"]
+  V -->|すべてPASS| OK["完了"]
+  V -->|401が出た| RE
+```
+
 ### なぜ行うのか
 
 PythonのCookie jarはプロトコル連携の自動試験用であり、実ブラウザのSameSite・CSP動作や見た目までは検証しない。127.0.0.1に限りSecure CookieをHTTPでも送るテスト用ポリシーで、ループバックを信頼するブラウザの挙動を模擬する。Originヘッダーも固定値で送るので、Referrer-Policyの影響を受けない。したがって、Chapter 03のブラウザ手順を省略しない。
+
+![browser_test.py（Cookie jar）で確かめるのはログインとSSO、トークン更新、ログアウト。実ブラウザでしか確かめられないのはSameSiteの扱い、CSPの適用、Referrer-PolicyとOrigin、画面の見た目](images/04-jar-vs-browser.svg)
 
 ブラウザ向けのヘッダーの期待値は、Goの `TestBrowserPolicyHeaders` で固定している（理由は[Chapter 06](./06-retrospective.md#設計判断)）。
 

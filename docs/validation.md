@@ -6,7 +6,7 @@
 
 実ブラウザで見つかった2件の不具合（Referrer-PolicyとCSP）を修正した後のソースで、新規Volumeから確認した。
 
-**環境**：Windows 11、Docker 29.9.2、Compose 5.6.1、Python 3.15.2（Windowsネイティブ）、Goテストは golang:1.24.4-bookworm コンテナ。ブラウザ操作はPlaywrightで自動化し、Chrome、Edge、Firefox 132を使用した。
+**環境**：Windows 11、Docker 29.9.2、Compose 5.6.1、Python 3.15.2（Windowsネイティブ）、Goテストは golang:1.27.3-bookworm コンテナ。ブラウザ操作はPlaywrightで自動化し、Chrome、Edge、Firefox 132を使用した。
 
 | 検証 | 結果 | 方法 |
 |---|---|---|

@@ -39,9 +39,13 @@ docker volume ls --filter name=keycloak-go-sso-lab_pg-data
 
 検証用PythonのCookie jarはプロセス終了で破棄される。アプリのメモリセッションはコンテナ削除で消える。
 
+![down --volumesで消えるのは6サービスのコンテナ、ネットワーク、DB Volume（pg-data）、アプリのメモリセッション。手動で消すのは.envとgenerated/、ダウンロードしたtoken、ブラウザの127.0.0.1のサイトデータ。残るのはイメージ、ビルドキャッシュ、Goモジュールキャッシュで、必要なものだけ個別に削除する](images/07-cleanup-scope.svg)
+
 ### なぜ行うのか
 
 通常のdownだけではVolumeが残り、次回のRealm importやDB初期化が再実行されない。
+
+![docker compose downではVolumeが残り、次回の起動でimportと初期化をスキップするので前回のRealmとDBのまま。docker compose down --volumesではVolumeも削除され、次回の起動でimportと初期化を実行し、新しい.envの値で作り直される](images/07-volumes.svg)
 
 ### 残るものと再開
 
