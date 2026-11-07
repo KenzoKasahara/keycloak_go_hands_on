@@ -18,11 +18,53 @@
 | 認可 | 認証は共通化できても、APIとデータの認可は各アプリに残る |
 | 可用性 | IdP停止はログインと更新を止めるが、公開鍵をキャッシュしたAPIの有効JWT検証は継続できる |
 
+## Keycloakとは
+
+Keycloakは、オープンソースの認証・認可サーバー（IdP：Identity Provider）である。OpenID Connect、OAuth 2.0、SAML 2.0に対応する。各アプリが自前で持っていた「ログイン画面」「パスワード照合」「ユーザー管理」を引き受け、アプリには「誰がログインしたか」を示すトークンを渡す。
+
+![利用者はKeycloakでログインする。Keycloakはログイン画面・パスワード照合、ユーザー・ロール管理、SSO、トークンの発行と署名を引き受ける。Web Appはトークンを受け取ってセッションを管理し、Go APIへBearerトークンを送る。Go APIはトークン検証と業務の認可を行う。パスワードはアプリに渡らない](./docs/images/00-keycloak-role.svg)
+
+| Keycloakが引き受けること | アプリ側に残ること |
+| --- | --- |
+| ログイン画面、パスワード照合、パスワードポリシー | トークンの検証（署名・発行元・宛先・期限） |
+| ユーザー・ロールの管理 | 「このユーザーがこのデータを操作してよいか」という業務の認可 |
+| SSO（一度のログインで複数アプリを利用） | アプリごとのセッション管理 |
+| トークン（ID Token、Access Token）の発行と署名 | |
+| MFA、外部IdP・LDAP連携（本教材では構築しない） | |
+
+本教材で使うKeycloakの用語は次のとおり。
+
+| 用語 | 意味 | 本教材での値 |
+| --- | --- | --- |
+| Realm | ユーザー・ロール・クライアントをまとめる管理単位。同じRealm内でSSOが成立する | `sso-lab` |
+| Client | Keycloakを利用するアプリの登録情報 | `web-a`、`web-b`（ログインする側）、`api-a`、`api-b`（トークンの宛先） |
+| User | ログインする利用者 | `alice`、`bob` |
+| Realm Role | ユーザーに付ける権限ラベル。Access Tokenに含まれ、APIのRBACに使う | `admin`、`user` |
+
 ## Architecture
 
 ![同じブラウザがWeb App A（9081、セッションCookie A）、Web App B（9082、セッションCookie B）、Keycloak（9080、認証とSSO Cookie）に接続する。WebはKeycloakとCode + PKCEでtokenを得て、aud api-aのtokenをGo API A（9001）、aud api-bのtokenをGo API B（9002）へ送る。両APIはKeycloakから公開鍵を取得する。KeycloakはDB keycloak（Role keycloak）、API BはDB app（Role app、documents）を使い、どちらも同一PostgreSQLインスタンスにある](./docs/images/00-architecture.svg)
 
 「別APIへ同じトークン」ボタンの検証用に、web-aはapi-bへ、web-bはapi-aへも呼び出す経路を持つ。
+
+### なぜAPIはKeycloakから公開鍵を取得するのか
+
+APIに届くAccess TokenはJWTである。JWTの中身（ユーザーID、ロール、宛先、期限）はBase64でエンコードされているだけで、誰でも読めるし書き換えられる。そのためAPIは、受け取ったトークンが「本当にKeycloakが発行し、改ざんされていない」ことを確かめる必要がある。この確認に公開鍵を使う。
+
+![Keycloakは秘密鍵を外に出さず、JWTに署名する。APIは初回や未知のkidのときだけJWKSで公開鍵を取得してメモリにキャッシュし、Web Appから届いたJWTの署名を手元で検証する。リクエストごとにKeycloakへ問い合わせない。公開鍵は検証にしか使えず署名は作れないため、APIに配ってもトークンを偽造されない](./docs/images/00-public-key.svg)
+
+- **署名**：Keycloakは秘密鍵でJWTに署名する。中身を1文字でも書き換えると署名が合わなくなり、APIは401を返す
+- **公開鍵である理由**：公開鍵は署名の検証にしか使えず、署名の作成には使えない。API A/Bに配っても、APIやその攻撃者がトークンを偽造することはできない。共通鍵（HMAC）方式だと、検証する側も同じ鍵で署名を作れてしまうため、APIが増えるほど偽造できる場所が増える
+- **リクエストごとの問い合わせが不要**：APIは手元の公開鍵だけで検証できる。リクエストのたびにKeycloakへ「このトークンは有効か」と問い合わせる方式（Token Introspection）と比べて、Keycloakへの負荷と通信の遅延がない
+- **取得元**：公開鍵はKeycloakのJWKSエンドポイント（`/realms/sso-lab/protocol/openid-connect/certs`）で公開されている。APIはこれを取得してメモリに保持する
+
+この方式にはトレードオフがある。本教材ではこれを Chapter 04・05 で観察する。
+
+| 観点 | 公開鍵でのローカル検証（本教材） | 毎回Keycloakへ問い合わせる方式 |
+| --- | --- | --- |
+| Keycloak停止中 | キャッシュ済みの鍵で、期限内のトークンは検証を続けられる（[Chapter 05](./docs/05-failure.md)） | 検証できない |
+| ログアウト・ロール変更の反映 | 発行済みトークンは期限（本教材は180秒）まで有効なまま（[Chapter 04](./docs/04-verification.md#ログアウトの検証)） | 問い合わせ時点の状態を反映できる |
+| 署名鍵の切り替え | トークンの`kid`が未知ならJWKSを再取得して追従する（[Chapter 05](./docs/05-failure.md)） | 影響しない |
 
 ## Hands-on Flow
 
